@@ -1,2 +1,1 @@
-# StructuralAnalysis.jl
-Structural analysis in Julia
+# StructuralAnalysis
