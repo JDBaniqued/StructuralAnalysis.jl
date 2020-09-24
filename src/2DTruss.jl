@@ -12,8 +12,6 @@ function L(member::Dict{Integer,Array{Integer}}, node::Dict{Integer,Array{Float6
 	return l
 end
 
-L(member,node)
-
 function cosϕ(member::Dict{Integer,Array{Integer}}, node::Dict{Integer,Array{Float64}})
 	cosphi = Dict{Integer, Float64}()
 	for e = 1:length(member)
@@ -24,8 +22,6 @@ function cosϕ(member::Dict{Integer,Array{Integer}}, node::Dict{Integer,Array{Fl
 	return cosphi
 end
 
-cosϕ(member,node)
-
 function sinϕ(member::Dict{Integer,Array{Integer}}, node::Dict{Integer,Array{Float64}})
 	sinphi = Dict{Integer, Float64}()
 	for e = 1:length(member)
@@ -35,8 +31,6 @@ function sinϕ(member::Dict{Integer,Array{Integer}}, node::Dict{Integer,Array{Fl
 	end
 	return sinphi
 end
-
-sinϕ(member,node)
 
 function AxialLocalK(E::Dict, A::Dict, Member::Dict)
 	k = Dict{}()
@@ -49,8 +43,6 @@ function AxialLocalK(E::Dict, A::Dict, Member::Dict)
 	end
 	return k
 end
-
-k = AxialLocalK(E,A,member)
 
 function AxialGlobalK(k::Dict,member::Dict)
 	K = zeros(length(node)*2, length(node)*2)
@@ -79,8 +71,6 @@ function AxialGlobalK(k::Dict,member::Dict)
 	return K
 end
 
-K = AxialGlobalK(k,member)
-
 ### Determine free nodal directions
 function FreeNodalDir(u::Dict)
 	Free = Integer[]
@@ -95,8 +85,6 @@ function FreeNodalDir(u::Dict)
 	return Free
 end
 
-free = FreeNodalDir(u)
-
 ### Augmented Global Stiffness Matrix
 function AugmentGlobal(Free::Array,K::Array)
 	K_Aug = zeros(length(Free),length(Free))
@@ -108,8 +96,6 @@ function AugmentGlobal(Free::Array,K::Array)
 	end
 	K_Aug
 end
-
-KAug = AugmentGlobal(free,K)
 
 ## Global Force Matrix"
 function GlobalForce(Free::Array,f::Dict)
@@ -124,7 +110,3 @@ function GlobalForce(Free::Array,f::Dict)
 	end
 	return Force
 end
-
-F = GlobalForce(free,f)
-
-U = inv(KAug) * F
