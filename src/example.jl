@@ -1,7 +1,5 @@
-# Truss Finite Element Analysis
-
-using 2DTruss
-## Model Description
+using StructuralAnalysis
+sa = StructuralAnalysis
 
 ### Nodes
 begin
@@ -58,3 +56,10 @@ begin
 	u[3] = [0,0]
 	u
 end
+
+k = sa.AxialLocalK(E,A,member,node)
+KG = sa.AxialGlobalK(k,member,node)
+Free = sa.FreeNodalDir(u)
+KGAug = sa.AugmentGlobal(Free,KG)
+Force = sa.GlobalForce(Free,f)
+freedisp = inv(KGAug) * Force
