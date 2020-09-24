@@ -32,14 +32,17 @@ function sinϕ(member::Dict{Integer,Array{Integer}}, node::Dict{Integer,Array{Fl
 	return sinphi
 end
 
-function AxialLocalK(E::Dict, A::Dict, Member::Dict)
+function AxialLocalK(E::Dict, A::Dict, Member::Dict{Integer,Array{Integer}}, Node::Dict{Integer,Array{Float64}})
 	k = Dict{}()
+	Length = L(Member,Node)
+	Cosϕ = cosϕ(Member,Node)
+	Sinϕ = sinϕ(Member,Node)
 	for e = 1:length(Member)
-		k[e] = E[e]*A[e]/L(Member[e])*
-	[[cosϕ(Member[e])^2, sinϕ(Member[e])*cosϕ(Member[e]), -cosϕ(Member[e])^2, -sinϕ(Member[e])*cosϕ(Member[e])],
-	[sinϕ(Member[e])*cosϕ(Member[e]), sinϕ(Member[e])^2, -sinϕ(Member[e])*cosϕ(Member[e]), -sinϕ(Member[e])^2],
-	[-cosϕ(Member[e])^2, -sinϕ(Member[e])*cosϕ(Member[e]), cosϕ(Member[e])^2, sinϕ(Member[e])*cosϕ(Member[e])],
-	[-sinϕ(Member[e])*cosϕ(Member[e]), -sinϕ(Member[e])^2, sinϕ(Member[e])*cosϕ(Member[e]),sinϕ(Member[e])^2]]
+		k[e] = E[e]*A[e]/Length[e]*
+	[[Cosϕ[e]^2, Sinϕ[e]*Cosϕ[e], -Cosϕ[e]^2, -Sinϕ[e]*Cosϕ[e]],
+	[Sinϕ[e]*Cosϕ[e], Sinϕ[e]^2, -Sinϕ[e]*Cosϕ[e], -Sinϕ[e]^2],
+	[-Cosϕ[e]^2, -Sinϕ[e]*Cosϕ[e], Cosϕ[e]^2, Sinϕ[e]*Cosϕ[e]],
+	[-Sinϕ[e]*Cosϕ[e], -Sinϕ[e]^2, Sinϕ[e]*Cosϕ[e], Sinϕ[e]^2]]
 	end
 	return k
 end
