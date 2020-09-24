@@ -34,7 +34,7 @@ end
 
 function AxialLocalK(E::Dict, A::Dict, Member::Dict)
 	k = Dict{}()
-	for e = 1:length(member)
+	for e = 1:length(Member)
 		k[e] = E[e]*A[e]/L(Member[e])*
 	[[cosϕ(Member[e])^2, sinϕ(Member[e])*cosϕ(Member[e]), -cosϕ(Member[e])^2, -sinϕ(Member[e])*cosϕ(Member[e])],
 	[sinϕ(Member[e])*cosϕ(Member[e]), sinϕ(Member[e])^2, -sinϕ(Member[e])*cosϕ(Member[e]), -sinϕ(Member[e])^2],
