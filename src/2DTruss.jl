@@ -47,7 +47,7 @@ function AxialLocalK(E::Dict, A::Dict, Member::Dict{Integer,Array{Integer}}, Nod
 	return k
 end
 
-function AxialGlobalK(k::Dict,member::Dict)
+function AxialGlobalK(k::Dict,member::Dict, node::Dict)
 	K = zeros(length(node)*2, length(node)*2)
 	for e = 1:length(member)
 		a = member[e][1] * 2 - 1
