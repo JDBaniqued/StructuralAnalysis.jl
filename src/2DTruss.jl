@@ -101,7 +101,7 @@ function AugmentGlobal(Free::Array,K::Array)
 end
 
 ## Global Force Matrix"
-function GlobalForce(Free::Array,f::Dict)
+function GlobalForce(free::Array,f::Dict)
 	Force = zeros(length(free))
 	for m = 1:length(free)
 		if free[m]%2 != 0
