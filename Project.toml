@@ -3,6 +3,9 @@ uuid = "683fc324-edd8-4b59-b916-753df32c43af"
 authors = ["Julius Rey Baniqued <jdbaniqued1@up.edu.ph> and contributors"]
 version = "0.1.0"
 
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+
 [compat]
 julia = "1"
 
