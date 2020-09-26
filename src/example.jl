@@ -39,6 +39,23 @@ begin
 	A
 end
 
+### Poisson's Ratio
+begin
+    ν = Dict{Integer,Float64}()
+    ν[1] = 0.3
+    ν[2] = 0.3
+    ν[3] = 0.3
+    ν
+end
+
+### Moment of Inertia
+begin
+    I = Dict{Integer,Array}()
+    I[1] = [100*10^6,200*10^6]
+    I[2] = [100*10^6,200*10^6]
+    I[3] = [100*10^6,200*10^6]
+end
+
 ### Forces
 begin
 	f = Dict{Integer, Array}()
@@ -56,6 +73,8 @@ begin
 	u[3] = [0,0]
 	u
 end
+
+kg = sa.LocalK(E, A, I, ν, member, node)
 
 k = sa.AxialLocalK(E,A,member,node)
 KG = sa.AxialGlobalK(k,member,node)
