@@ -1,43 +1,3 @@
-### Nodes
-begin
-	node = Dict{Integer,Array{Float64}}()
-	node[1] = [4000/tan(30*π/180),4000]
-	node[2] = [10928,0]
-	node[3] = [0,0]
-	node
-end
-
-### Members
-begin
-	member = Dict{Integer,Array{Integer}}()
-	member[1] = [1,2]
-	member[2] = [1,3]
-	member[3] = [2,3]
-	member
-end
-
-node[member[1][2]][1]
-
-### Modulus of Elasticity
-begin
-	E = Dict{Integer, Float64}()
-	E[1] = 200
-	E[2] = 200
-	E[3] = 200
-	E
-end
-
-### Cross-Sectional Area
-begin
-	A = Dict{Integer, Float64}()
-	A[1] = 20000
-	A[2] = 15000
-	A[3] = 18000
-	A
-end
-
-
-
 function L(member::Dict{Integer,Array{Integer}}, node::Dict{Integer,Array{Float64}})
 	l = Dict{Integer, Float64}()
 	for e = 1:length(member)
@@ -46,22 +6,51 @@ function L(member::Dict{Integer,Array{Integer}}, node::Dict{Integer,Array{Float6
 	return l
 end
 
-function LocalK(E::Dict, A::Dict, I::Dict, ν::Dict, Member::Dict{Integer,Array{Integer}}, Node::Dict{Integer,Array{Float64}})
-	K = Dict{}()
-	Length = L(Member,Node)
-	for e = 1:length(Member)
-		K[e] = E[e]*[[A[e]/Length[e],0,0,0,0,0,-A[e]/Length[e],0,0,0,0,0],
-		[0,12*I[e][2]/Length[e]^3,0,0,0,6*I[e][2]/Length[e]^2,0,-12*I[e][2]/Length[e]^3,0,0,0,6*I[e][2]/Length[e]^2],
-		[0,0,12*I[e][1]/Length[e]^3,0,-6*I[e][1]/Length[e]^2,0,0,0,-12*I[e][1]/Length[e]^3,0,-6*I[e][1]/Length[e]^2,0],
-		[0,0,0,(I[e][1]+I[e][2])/(2*(1+ν[e])*Length[e]^3),0,0,0,0,0,-(I[e][1]+I[e][2])/(2*(1+ν[e])*Length[e]^3),0,0],
-		[0,0,-6*I[e][1]/Length[e]^2,0,4*I[e][1]/Length[e],0,0,0,6*I[e][1]/Length[e]^2,0,2*I[e][1]/Length[e],0],
-		[0,6*I[e][2]/Length[e]^2,0,0,0,4*I[e][2]/Length[e],0,0,-6*I[e][2]/Length[e]^2,0,0,0,2*I[e][2]/Length[e],0],
-		[-A[e]/Length[e],0,0,0,0,0,A[e]/Length[e],0,0,0,0,0],
-		[0,-12*I[e][2]/Length[e]^3,0,0,0,-6*I[e][2]/Length[e]^2,0,12*I[e][2]/Length[e]^3,0,0,0,-6*I[e][2]/Length[e]^2],
-		[0,0,-12*I[e][1]/Length[e]^3,0,6*I[e][1]/Length[e]^2,0,0,0,12*I[e][1]/Length[e]^3,0,6*I[e][1]/Length[e]^2,0],
-		[0,0,0,-(I[e][1]+I[e][2])/(2*(1+ν[e])*Length[e]^3),0,0,0,0,0,(I[e][1]+I[e][2])/(2*(1+ν[e])*Length[e]^3),0,0],
-		[0,0,-6*I[e][1]/Length[e]^2,0,2*I[e][1]/Length[e],0,0,0,6*I[e][1]/Length[e]^2,0,4*I[e][1]/Length[e],0],
-		[0,6*I[e][2]/Length[e]^2,0,0,0,2*I[e][2]/Length[e],0,0,-6*I[e][2]/Length[e]^2,0,0,0,4*I[e][2]/Length[e],0]]
+function LocalK(member::Dict{Integer,Array{Integer}}, node::Dict{Integer,Array{Float64}}, E::Dict{Integer, Float64}, ν::Dict{Integer, Float64}, A::Dict{Integer, Float64}, I:: Dict{Integer, Array{Float64}})
+	K = Dict{Integer, Array{Float64}}()
+	l = L(member,node)
+	for e = 1:length(member)
+		K[e] = zeros(Float64,12,12)
+		K[e][1,1] = E[e]*A[e]/l[e]
+		K[e][1,7] = -E[e]*A[e]/l[e]
+		K[e][2,2] = E[e]*12*I[e][3]/l[e]^3
+		K[e][2,6] = E[e]*6*I[e][3]/l[e]^2
+		K[e][2,8] = -E[e]*12*I[e][3]/l[e]^3
+		K[e][2,12] = E[e]*6*I[e][3]/l[e]^2
+		K[e][3,3] = E[e]*12*I[e][2]/l[e]^3
+		K[e][3,5] = -E[e]*6*I[e][2]/l[e]^2
+		K[e][3,9] = -E[e]*12*I[e][2]/l[e]^3
+		K[e][3,11] = -E[e]*6*I[e][2]/l[e]^2
+		K[e][4,4] = E[e]*I[e][1]/2/(1+ν[e])/l[e]
+		K[e][4,10] = -E[e]*I[e][1]/2/(1+ν[e])/l[e]
+		K[e][5,3] = -E[e]*6*I[e][2]/l[e]^2
+		K[e][5,5] = E[e]*4*I[e][2]/l[e]
+		K[e][5,9] = E[e]*6*I[e][2]/l[e]^2
+		K[e][5,11] = E[e]*2*I[e][2]/l[e]
+		K[e][6,2] = E[e]*6*I[e][3]/l[e]^2
+		K[e][6,6] = E[e]*4*I[e][3]/l[e]
+		K[e][6,8] = -E[e]*6*I[e][3]/l[e]^2
+		K[e][6,12] = E[e]*2*I[e][3]/l[e]
+		K[e][7,1] = -E[e]*A[e]/l[e]
+		K[e][7,7] = E[e]*A[e]/l[e]
+		K[e][8,2] = -E[e]*12*I[e][3]/l[e]^3
+		K[e][8,6] = -E[e]*6*I[e][3]/l[e]^2
+		K[e][8,8] = E[e]*12*I[e][3]/l[e]^3
+		K[e][8,12] = -E[e]*6*I[e][3]/l[e]^2
+		K[e][9,3] = -E[e]*12*I[e][2]/l[e]^3
+		K[e][9,5] = E[e]*6*I[e][2]/l[e]^2
+		K[e][9,9] = E[e]*12*I[e][2]/l[e]^3
+		K[e][9,11] = E[e]*6*I[e][2]/l[e]^2
+		K[e][10,4] = -E[e]*I[e][1]/2/(1+ν[e])/l[e]
+		K[e][10,10] = E[e]*I[e][1]/2/(1+ν[e])/l[e]
+		K[e][11,3] = -E[e]*6*I[e][2]/l[e]^2
+		K[e][11,5] = E[e]*2*I[e][2]/l[e]
+		K[e][11,9] = E[e]*6*I[e][2]/l[e]^2
+		K[e][11,11] = E[e]*4*I[e][2]/l[e]
+		K[e][12,2] = E[e]*6*I[e][3]/l[e]^2
+		K[e][12,6] = E[e]*2*I[e][3]/l[e]
+		K[e][12,8] = -E[e]*6*I[e][3]/l[e]^2
+		K[e][12,12] = E[e]*4*I[e][3]/l[e]
 	end
 	return K
 end
